@@ -5,7 +5,7 @@ services:
   webserver:
   build:
     context: ./bin/webserver
-  image: sashwat-project-devops/iot-platform:webserver
+  image: "sashwat-project-devops/iot-platform:webserver"
   container_name: "webserver"
   restart: "always"
   ports:
@@ -23,7 +23,7 @@ services:
   webserverapi:
     build:
       context: ./bin/webserverapiserver
-    image: sashwat-project-devops/iot-platform:webserverapi
+    image: "sashwat-project-devops/iot-platform:webserverapi"
     container_name: "webserverapi"
     restart: "always"
     ports:
@@ -36,7 +36,7 @@ services:
   publicapi:
     build:
       context: ./bin/publicapiserver
-    image: sashwat-project-devops/iot-platform:publicapi
+    image: "sashwat-project-devops/iot-platform:publicapi"
     container_name: "publicapi"
     restart: "always"
     ports:
@@ -49,7 +49,7 @@ services:
   deviceapi:
     build:
       context: ./bin/deviceapiserver
-    image: sashwat-project-devops/iot-platform:deviceapi
+    image: "sashwat-project-devops/iot-platform:deviceapi"
     container_name: "deviceapi"
     restart: "always"
     ports:
@@ -62,7 +62,7 @@ services:
   mysql:
     build:
       context: ./bin/mysql
-    image: sashwat-project-devops/iot-platform:mysql
+    image: "sashwat-project-devops/iot-platform:mysql"
     container_name: "mysql"
     restart: "always"
     ports:
@@ -80,7 +80,7 @@ services:
   phpmyadmin:
     build:
       context: ./bin/phpmyadmin
-    image: sashwat-project-devops/iot-platform:phpmyadmin
+    image: "sashwat-project-devops/iot-platform:phpmyadmin"
     container_name: "phpmyadmin"
     links:
       - mysql
@@ -96,7 +96,7 @@ services:
   mongodb:
     build:
       context: ./bin/mongodb
-    image: sashwat-project-devops/iot-platform:mongodb
+    image: "sashwat-project-devops/iot-platform:mongodb"
     container_name: "mongodb"
     restart: "always"
     ports:
@@ -115,7 +115,7 @@ services:
   mongo-express:
     build:
       context: ./bin/mongoexpress
-    image: sashwat-project-devops/iot-platform:mongo-express
+    image: "sashwat-project-devops/iot-platform:mongo-express"
     container_name: "mongo-express"
     restart: always
     ports:
