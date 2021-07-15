@@ -1,1 +1,128 @@
 version: "3"
+
+services:
+  # webserver
+  webserver:
+  build:
+    context: ./bin/webserver
+  image: sashwat-project-devops/iot-platform:webserver
+  container_name: "webserver"
+  restart: "always"
+  ports:
+    - "${UNSECURE_HOST_PORT}:80"
+    - "${SECURE_HOST_PORT}:443"
+  links:
+    - webserverapi
+  volumes:
+    - ${PHP_INI-./config/php/php.ini}:/usr/local/etc/php/php.ini
+    - ${APACHE_CONFIG-./config/apache2/apache2.conf}:/etc/apache2/apache2.conf
+    - ${VHOSTS_DIR-./config/vhosts}:/etc/apache2/sites-enabled
+    - ${LOG_DIR-./logs/apache2}:/var/log/apache2
+
+  # webserver API
+  webserverapi:
+    build:
+      context: ./bin/webserverapiserver
+    image: sashwat-project-devops/iot-platform:webserverapi
+    container_name: "webserverapi"
+    restart: "always"
+    ports:
+      - "${WEBSERVERAPI_PORT}:5000"
+    links:
+      - mysql
+      - mongodb
+
+  # public API
+  publicapi:
+    build:
+      context: ./bin/publicapiserver
+    image: sashwat-project-devops/iot-platform:publicapi
+    container_name: "publicapi"
+    restart: "always"
+    ports:
+      - "${PUBLICAPI_PORT}:5000"
+    links:
+      - mysql
+      - mongodb
+
+  # device API
+  deviceapi:
+    build:
+      context: ./bin/deviceapiserver
+    image: sashwat-project-devops/iot-platform:deviceapi
+    container_name: "deviceapi"
+    restart: "always"
+    ports:
+      - "${DEVICEAPI_PORT}:5000"
+    links:
+      - mysql
+      - mongodb
+
+  # mysql server
+  mysql:
+    build:
+      context: ./bin/mysql
+    image: sashwat-project-devops/iot-platform:mysql
+    container_name: "mysql"
+    restart: "always"
+    ports:
+      - "${HOST_MACHINE_MYSQL_PORT}"
+    volumes:
+      - ${MYSQL_DATA_DIR-./data/mysql}:/var/lib/mysql
+      - ${MYSQL_LOG_DIR-./logs/mysql}:/var/log/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+
+  # PHPMyAdmin
+  phpmyadmin:
+    build:
+      context: ./bin/phpmyadmin
+    image: sashwat-project-devops/iot-platform:phpmyadmin
+    container_name: "phpmyadmin"
+    links:
+      - mysql
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: ${HOST_MACHINE_MYSQL_PORT}
+    ports:
+      - "${PHPMYADMIN_PORT}:80"
+    volumes:
+      - /sessions
+
+  # MongoDB
+  mongodb:
+    build:
+      context: ./bin/mongodb
+    image: sashwat-project-devops/iot-platform:mongodb
+    container_name: "mongodb"
+    restart: "always"
+    ports:
+      - "${MONGODB_PORT}:27017"
+    volumes:
+      - ${MONGODB_DATA_DIR-./data/mongodb}:/data/db
+      - ${MONGODB_CONFIG_DIR-./config/mongodb/mongod.conf}:/etc/mongo/mongod.conf
+      - ${MONGODB_LOG_DIR-./logs/mongodb/}:/var/log/mongodb/
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGODB_DATABASE}
+    command: --config /etc/mongo/mongod.conf
+
+  # Mongo Express
+  mongo-express:
+    build:
+      context: ./bin/mongoexpress
+    image: sashwat-project-devops/iot-platform:mongo-express
+    container_name: "mongo-express"
+    restart: always
+    ports:
+      - "${MONGOEXPRESS_PORT}:8081"
+    links:
+      - mongodb
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongodb
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGODB_USERNAME}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGODB_PASSWORD}
