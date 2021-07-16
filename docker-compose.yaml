@@ -1,33 +1,33 @@
-version: "3"
+version: "3.7"
 
 services:
   # webserver
   webserver:
-  build:
-    context: ./bin/webserver
-  image: "sashwat-project-devops/iot-platform:webserver"
-  container_name: "webserver"
-  restart: "always"
-  ports:
-    - "${UNSECURE_HOST_PORT}:80"
-    - "${SECURE_HOST_PORT}:443"
-  links:
-    - webserverapi
-  volumes:
-    - ${PHP_INI-./config/php/php.ini}:/usr/local/etc/php/php.ini
-    - ${APACHE_CONFIG-./config/apache2/apache2.conf}:/etc/apache2/apache2.conf
-    - ${VHOSTS_DIR-./config/vhosts}:/etc/apache2/sites-enabled
-    - ${LOG_DIR-./logs/apache2}:/var/log/apache2
+    build:
+      context: ./bin/webserver
+    image: sashwat_project_devops/iot_platform:webserver
+    container_name: "webserver"
+    restart: "always"
+    ports:
+      - "${UNSECURE_HOST_PORT}:80"
+      - "${SECURE_HOST_PORT}:443"
+    links:
+      - webserverapi
+    volumes:
+      - ${PHP_INI-./config/php/php.ini}:/usr/local/etc/php/php.ini
+      - ${APACHE_CONFIG-./config/apache2/apache2.conf}:/etc/apache2/apache2.conf
+      - ${VHOSTS_DIR-./config/vhosts}:/etc/apache2/sites-enabled
+      - ${LOG_DIR-./logs/apache2}:/var/log/apache2
 
   # webserver API
   webserverapi:
     build:
       context: ./bin/webserverapiserver
-    image: "sashwat-project-devops/iot-platform:webserverapi"
+    image: sashwat_project_devops/iot_platform:webserverapi
     container_name: "webserverapi"
     restart: "always"
     ports:
-      - "${WEBSERVERAPI_PORT}:5000"
+      - "${WEBSERVERAPI_PORT}"
     links:
       - mysql
       - mongodb
@@ -36,7 +36,7 @@ services:
   publicapi:
     build:
       context: ./bin/publicapiserver
-    image: "sashwat-project-devops/iot-platform:publicapi"
+    image: sashwat_project_devops/iot_platform:publicapi
     container_name: "publicapi"
     restart: "always"
     ports:
@@ -49,7 +49,7 @@ services:
   deviceapi:
     build:
       context: ./bin/deviceapiserver
-    image: "sashwat-project-devops/iot-platform:deviceapi"
+    image: sashwat_project_devops/iot_platform:deviceapi
     container_name: "deviceapi"
     restart: "always"
     ports:
@@ -62,7 +62,7 @@ services:
   mysql:
     build:
       context: ./bin/mysql
-    image: "sashwat-project-devops/iot-platform:mysql"
+    image: sashwat_project_devops/iot_platform:mysql
     container_name: "mysql"
     restart: "always"
     ports:
@@ -80,7 +80,7 @@ services:
   phpmyadmin:
     build:
       context: ./bin/phpmyadmin
-    image: "sashwat-project-devops/iot-platform:phpmyadmin"
+    image: sashwat_project_devops/iot_platform:phpmyadmin
     container_name: "phpmyadmin"
     links:
       - mysql
@@ -96,11 +96,11 @@ services:
   mongodb:
     build:
       context: ./bin/mongodb
-    image: "sashwat-project-devops/iot-platform:mongodb"
+    image: sashwat_project_devops/iot_platform:mongodb
     container_name: "mongodb"
     restart: "always"
     ports:
-      - "${MONGODB_PORT}:27017"
+      - "${MONGODB_PORT}"
     volumes:
       - ${MONGODB_DATA_DIR-./data/mongodb}:/data/db
       - ${MONGODB_CONFIG_DIR-./config/mongodb/mongod.conf}:/etc/mongo/mongod.conf
@@ -115,8 +115,8 @@ services:
   mongo-express:
     build:
       context: ./bin/mongoexpress
-    image: "sashwat-project-devops/iot-platform:mongo-express"
-    container_name: "mongo-express"
+    image: sashwat_project_devops/iot_platform:mongoexpress
+    container_name: "mongo_express"
     restart: always
     ports:
       - "${MONGOEXPRESS_PORT}:8081"
